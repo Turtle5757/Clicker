@@ -4,12 +4,10 @@ let coinsPerClick = 1;
 let coinsPerSecond = 0;
 let prestigePoints = 0;
 let lastSaved = Date.now();
-
-// Multipliers
 let clickMultiplier = 1;
 let idleMultiplier = 1;
 
-// Generators (10)
+// Generators
 let generators = [
   { name: "Coin Golem", cost: 50, cps: 1, owned: 0 },
   { name: "Cash Printer", cost: 200, cps: 5, owned: 0 },
@@ -23,7 +21,7 @@ let generators = [
   { name: "Cosmic Bank", cost: 5000000, cps: 100000, owned: 0 },
 ];
 
-// Upgrades (20 quirky)
+// Upgrades
 let upgrades = [
   { name: "Hire a Butler", cost: 50, effect: () => coinsPerClick += 2, purchased: false },
   { name: "Buy a Vending Machine", cost: 200, effect: () => generators[0].cps += 2, purchased: false },
@@ -47,7 +45,7 @@ let upgrades = [
   { name: "Prestige Bank", cost: 2000000, effect: () => prestigePoints += 1, purchased: false },
 ];
 
-// Achievements (simple)
+// Achievements
 let achievements = [
   { name: "First Click", condition: () => coins >= 1, unlocked: false },
   { name: "100 Coins", condition: () => coins >= 100, unlocked: false },
@@ -55,18 +53,18 @@ let achievements = [
   { name: "Prestige Starter", condition: () => prestigePoints >= 1, unlocked: false },
 ];
 
-// Elements
+// DOM Elements
 const coinsEl = document.getElementById('coins');
 const cpsEl = document.getElementById('cps');
+const prestigeEl = document.getElementById('prestige');
 const clickBtn = document.getElementById('click-btn');
 const upgradesContainer = document.getElementById('upgrades-container');
 const generatorsContainer = document.getElementById('generators-container');
-const prestigeBtn = document.getElementById('prestige-btn');
-const prestigeInfo = document.getElementById('prestige-info');
 const achievementsContainer = document.getElementById('achievements-container');
+const prestigeBtn = document.getElementById('prestige-btn');
 const autoBuyCheckbox = document.getElementById('auto-buy');
 
-// Load game & offline
+// Load game
 loadGame();
 applyOfflineProgress();
 renderUpgrades();
@@ -86,9 +84,7 @@ clickBtn.addEventListener('click', () => {
 prestigeBtn.addEventListener('click', () => {
   if(coins>=1000){
     prestigePoints += Math.floor(coins/1000);
-    coins=0;
-    coinsPerClick=1;
-    coinsPerSecond=0;
+    coins=0; coinsPerClick=1; coinsPerSecond=0;
     generators.forEach(g=>g.owned=0);
     upgrades.forEach(u=>u.purchased=false);
     upgrades.forEach(u=>u.cost=Math.floor(u.cost/2));
@@ -126,25 +122,37 @@ function buyGenerator(i){
   }
 }
 
-// Render
-function renderUpgrades(){
-  upgradesContainer.innerHTML="";
-  upgrades.forEach((up,i)=>{
-    let btn = document.createElement('button');
-    btn.textContent=`${up.name} - ${up.cost} Coins`;
-    btn.disabled = up.purchased;
-    btn.addEventListener('click',()=>buyUpgrade(i));
-    upgradesContainer.appendChild(btn);
+// Render Functions
+function renderGenerators(){
+  generatorsContainer.innerHTML = "";
+  generators.forEach((gen,i)=>{
+    const card = document.createElement('div');
+    card.className = "card";
+    card.innerHTML = `<strong>${gen.name}</strong><br>
+                      Owned: ${gen.owned}<br>
+                      CPS: ${gen.cps}<br>
+                      Cost: ${gen.cost}`;
+    const btn = document.createElement('button');
+    btn.textContent = "Buy";
+    btn.disabled = coins < gen.cost;
+    btn.addEventListener('click',()=>buyGenerator(i));
+    card.appendChild(btn);
+    generatorsContainer.appendChild(card);
   });
 }
 
-function renderGenerators(){
-  generatorsContainer.innerHTML="";
-  generators.forEach((gen,i)=>{
-    let btn = document.createElement('button');
-    btn.textContent=`${gen.name} (${gen.owned}) - ${gen.cost} Coins`;
-    btn.addEventListener('click',()=>buyGenerator(i));
-    generatorsContainer.appendChild(btn);
+function renderUpgrades(){
+  upgradesContainer.innerHTML = "";
+  upgrades.forEach((up,i)=>{
+    const card = document.createElement('div');
+    card.className = "card";
+    card.innerHTML = `<strong>${up.name}</strong><br>Cost: ${up.cost}`;
+    const btn = document.createElement('button');
+    btn.textContent = up.purchased ? "Purchased" : "Buy";
+    btn.disabled = coins < up.cost || up.purchased;
+    btn.addEventListener('click',()=>buyUpgrade(i));
+    card.appendChild(btn);
+    upgradesContainer.appendChild(card);
   });
 }
 
@@ -153,7 +161,7 @@ function renderAchievements(){
   achievements.forEach(a=>{
     const div=document.createElement('div');
     div.textContent = a.unlocked ? `✔ ${a.name}`:`❌ ${a.name}`;
-    div.className='achievement';
+    div.className='card';
     achievementsContainer.appendChild(div);
   });
 }
@@ -174,11 +182,10 @@ setInterval(()=>{
   updateDisplay();
 },1000);
 
-// Update Display
 function updateDisplay(){
-  coinsEl.textContent = `Coins: ${Math.floor(coins)}`;
-  cpsEl.textContent = `Coins per second: ${Math.floor(coinsPerSecond*idleMultiplier)}`;
-  prestigeInfo.textContent = `Prestige Points: ${prestigePoints}`;
+  coinsEl.textContent = Math.floor(coins);
+  cpsEl.textContent = Math.floor(coinsPerSecond * idleMultiplier);
+  prestigeEl.textContent = prestigePoints;
   renderAchievements();
   saveGame();
 }
@@ -238,7 +245,6 @@ function loadGame(){
   }
 }
 
-// Offline Progress
 function applyOfflineProgress(){
   const now=Date.now();
   const secondsAway=Math.floor((now-lastSaved)/1000);
