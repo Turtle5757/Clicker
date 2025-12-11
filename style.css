@@ -1,0 +1,40 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background: #e0f7fa;
+  margin: 0;
+  padding: 20px;
+}
+
+.game-container {
+  background: white;
+  display: inline-block;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0px 0px 20px rgba(0,0,0,0.2);
+  max-width: 500px;
+}
+
+button {
+  padding: 10px 20px;
+  margin: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#upgrades-container button, #generators-container button {
+  display: block;
+  margin: 5px auto;
+}
+
+.achievement {
+  color: green;
+  font-weight: bold;
+  margin: 3px 0;
+}
+
+.floating-effect {
+  position: absolute;
+  font-weight: bold;
+  z-index: 1000;
+}
