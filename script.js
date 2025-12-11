@@ -45,12 +45,26 @@ let upgrades = [
   { name: "Prestige Bank", cost: 2000000, effect: () => prestigePoints += 1, purchased: false },
 ];
 
-// Achievements
+// Achievements (15+)
 let achievements = [
   { name: "First Click", condition: () => coins >= 1, unlocked: false },
   { name: "100 Coins", condition: () => coins >= 100, unlocked: false },
+  { name: "1,000 Coins", condition: () => coins >= 1000, unlocked: false },
+  { name: "10,000 Coins", condition: () => coins >= 10000, unlocked: false },
+  { name: "Super Clicker", condition: () => coinsPerClick >= 50, unlocked: false },
   { name: "First Generator", condition: () => generators[0].owned >= 1, unlocked: false },
+  { name: "Generator Collector", condition: () => generators.reduce((sum,g)=>sum+g.owned,0) >= 10, unlocked: false },
+  { name: "CPS Master", condition: () => coinsPerSecond >= 500, unlocked: false },
+  { name: "Mega Factory Owner", condition: () => generators[3].owned >= 1, unlocked: false },
+  { name: "Dragon Vault Holder", condition: () => generators[4].owned >= 1, unlocked: false },
   { name: "Prestige Starter", condition: () => prestigePoints >= 1, unlocked: false },
+  { name: "Prestige Collector", condition: () => prestigePoints >= 5, unlocked: false },
+  { name: "Prestige Master", condition: () => prestigePoints >= 20, unlocked: false },
+  { name: "First Upgrade", condition: () => upgrades.some(u=>u.purchased), unlocked: false },
+  { name: "Upgrade Enthusiast", condition: () => upgrades.filter(u=>u.purchased).length >= 5, unlocked: false },
+  { name: "Ultimate Upgrade", condition: () => upgrades.filter(u=>u.purchased).length >= 15, unlocked: false },
+  { name: "Offline Riches", condition: () => coins >= 5000 && (Date.now() - lastSaved) > 10000, unlocked: false },
+  { name: "Lucky Penny", condition: () => upgrades[6].purchased, unlocked: false },
 ];
 
 // DOM Elements
@@ -75,7 +89,7 @@ updateDisplay();
 // Click
 clickBtn.addEventListener('click', () => {
   coins += coinsPerClick * clickMultiplier;
-  showFloatingEffect(`+${coinsPerClick * clickMultiplier}`, 'gold', clickBtn);
+  showFloatingEffect(`+${Math.floor(coinsPerClick * clickMultiplier)}`, 'gold', clickBtn);
   checkAchievements();
   updateDisplay();
 });
@@ -199,6 +213,7 @@ setInterval(()=>{
   updateDisplay();
 },1000);
 
+// Update Display
 function updateDisplay(){
   coinsEl.textContent = Math.floor(coins);
   cpsEl.textContent = Math.floor(coinsPerSecond * idleMultiplier);
@@ -225,7 +240,6 @@ function showFloatingEffect(text,color,parent){
   effect.style.left=`${rect.left + Math.random()*rect.width}px`;
   effect.style.top=`${rect.top}px`;
   effect.style.color=color;
-  effect.style.fontWeight='bold';
   effect.className='floating-effect';
   document.body.appendChild(effect);
   let y=parseInt(effect.style.top);
