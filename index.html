@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ultimate Clicker Pro</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="game-container">
+  <h1>Ultimate Clicker Pro</h1>
+  <div id="coins">Coins: 0</div>
+  <div id="cps">Coins per second: 0</div>
+  
+  <button id="click-btn">Click Me!</button>
+
+  <div>
+    <label><input type="checkbox" id="auto-buy"> Auto Buy Generators</label>
+  </div>
+  
+  <h2>Upgrades</h2>
+  <div id="upgrades-container"></div>
+
+  <h2>Generators</h2>
+  <div id="generators-container"></div>
+
+  <h2>Achievements</h2>
+  <div id="achievements-container"></div>
+
+  <h2>Prestige</h2>
+  <button id="prestige-btn">Prestige (Reset for bonus)</button>
+  <div id="prestige-info"></div>
+
+  <h2>Save / Load</h2>
+  <button onclick="downloadSave()">Download Save</button>
+  <input type="file" onchange="loadSave(event)">
+</div>
+<script src="script.js"></script>
+</body>
+</html>
