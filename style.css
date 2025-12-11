@@ -98,3 +98,9 @@ h1 {
   font-weight: bold;
   color: white;
 }
+
+.floating-effect {
+  position: absolute;
+  font-weight: bold;
+  z-index: 1000;
+}
