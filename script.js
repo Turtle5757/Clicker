@@ -9,16 +9,16 @@ let idleMultiplier = 1;
 
 // Generators
 let generators = [
-  { name: "Coin Golem", cost: 50, cps: 1, owned: 0 },
-  { name: "Cash Printer", cost: 200, cps: 5, owned: 0 },
-  { name: "Golden Robot", cost: 1000, cps: 25, owned: 0 },
-  { name: "Quantum Farm", cost: 5000, cps: 100, owned: 0 },
-  { name: "Dragon Vault", cost: 20000, cps: 500, owned: 0 },
-  { name: "Lucky Leprechaun", cost: 50000, cps: 1000, owned: 0 },
-  { name: "Robot Accountant", cost: 200000, cps: 5000, owned: 0 },
-  { name: "Coin Mining Laser", cost: 500000, cps: 10000, owned: 0 },
-  { name: "Time-Warp Factory", cost: 1000000, cps: 25000, owned: 0 },
-  { name: "Cosmic Bank", cost: 5000000, cps: 100000, owned: 0 },
+  { name: "Coin Golem", cost: 50, cps: 1, owned: 0, icon: "💰" },
+  { name: "Cash Printer", cost: 200, cps: 5, owned: 0, icon: "🖨️" },
+  { name: "Golden Robot", cost: 1000, cps: 25, owned: 0, icon: "🤖" },
+  { name: "Quantum Farm", cost: 5000, cps: 100, owned: 0, icon: "🌾" },
+  { name: "Dragon Vault", cost: 20000, cps: 500, owned: 0, icon: "🐉" },
+  { name: "Lucky Leprechaun", cost: 50000, cps: 1000, owned: 0, icon: "🍀" },
+  { name: "Robot Accountant", cost: 200000, cps: 5000, owned: 0, icon: "📊" },
+  { name: "Coin Mining Laser", cost: 500000, cps: 10000, owned: 0, icon: "🔫" },
+  { name: "Time-Warp Factory", cost: 1000000, cps: 25000, owned: 0, icon: "⏳" },
+  { name: "Cosmic Bank", cost: 5000000, cps: 100000, owned: 0, icon: "🏦" },
 ];
 
 // Upgrades
@@ -83,16 +83,18 @@ clickBtn.addEventListener('click', () => {
 // Prestige
 prestigeBtn.addEventListener('click', () => {
   if(coins>=1000){
-    prestigePoints += Math.floor(coins/1000);
+    let gained = Math.floor(coins/1000);
+    prestigePoints += gained;
     coins=0; coinsPerClick=1; coinsPerSecond=0;
     generators.forEach(g=>g.owned=0);
     upgrades.forEach(u=>u.purchased=false);
     upgrades.forEach(u=>u.cost=Math.floor(u.cost/2));
-    showFloatingEffect(`Prestige! +${prestigePoints} Points`,'purple',prestigeBtn);
-    checkAchievements();
+    showFloatingEffect(`Prestige! +${gained} Points`,'purple',prestigeBtn);
     renderUpgrades();
     renderGenerators();
     updateDisplay();
+  } else {
+    alert("You need at least 1000 coins to Prestige!");
   }
 });
 
@@ -122,16 +124,27 @@ function buyGenerator(i){
   }
 }
 
-// Render Functions
+// Render Generators with Progress & Locked State
 function renderGenerators(){
   generatorsContainer.innerHTML = "";
   generators.forEach((gen,i)=>{
     const card = document.createElement('div');
+    const affordableSoon = coins >= gen.cost*0.8 && coins < gen.cost;
     card.className = "card";
-    card.innerHTML = `<strong>${gen.name}</strong><br>
+    if(affordableSoon) card.classList.add("locked");
+    card.innerHTML = `<div style="font-size:24px">${gen.icon}</div>
+                      <strong>${gen.name}</strong><br>
                       Owned: ${gen.owned}<br>
                       CPS: ${gen.cps}<br>
                       Cost: ${gen.cost}`;
+    const progress = document.createElement('div');
+    progress.className='progress-bar';
+    const inner = document.createElement('div');
+    inner.className='progress-bar-inner';
+    inner.style.width = Math.min(100, (coins/gen.cost)*100)+'%';
+    progress.appendChild(inner);
+    card.appendChild(progress);
+
     const btn = document.createElement('button');
     btn.textContent = "Buy";
     btn.disabled = coins < gen.cost;
@@ -141,11 +154,14 @@ function renderGenerators(){
   });
 }
 
+// Render Upgrades with Locked State
 function renderUpgrades(){
   upgradesContainer.innerHTML = "";
   upgrades.forEach((up,i)=>{
     const card = document.createElement('div');
+    const affordableSoon = coins >= up.cost*0.8 && coins < up.cost;
     card.className = "card";
+    if(affordableSoon && !up.purchased) card.classList.add("locked");
     card.innerHTML = `<strong>${up.name}</strong><br>Cost: ${up.cost}`;
     const btn = document.createElement('button');
     btn.textContent = up.purchased ? "Purchased" : "Buy";
@@ -156,6 +172,7 @@ function renderUpgrades(){
   });
 }
 
+// Render Achievements
 function renderAchievements(){
   achievementsContainer.innerHTML="";
   achievements.forEach(a=>{
@@ -204,13 +221,11 @@ function checkAchievements(){
 function showFloatingEffect(text,color,parent){
   const effect=document.createElement('div');
   effect.textContent=text;
-  effect.style.position='absolute';
   const rect=parent.getBoundingClientRect();
   effect.style.left=`${rect.left + Math.random()*rect.width}px`;
   effect.style.top=`${rect.top}px`;
   effect.style.color=color;
   effect.style.fontWeight='bold';
-  effect.style.zIndex=1000;
   effect.className='floating-effect';
   document.body.appendChild(effect);
   let y=parseInt(effect.style.top);
