@@ -1,40 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultimate Clicker Pro</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
 <div class="game-container">
   <h1>Ultimate Clicker Pro</h1>
-  <div id="coins">Coins: 0</div>
-  <div id="cps">Coins per second: 0</div>
   
-  <button id="click-btn">Click Me!</button>
-
-  <div>
-    <label><input type="checkbox" id="auto-buy"> Auto Buy Generators</label>
+  <div class="stats">
+    <div class="stat">Coins: <span id="coins">0</span></div>
+    <div class="stat">CPS: <span id="cps">0</span></div>
+    <div class="stat">Prestige: <span id="prestige">0</span></div>
   </div>
-  
-  <h2>Upgrades</h2>
-  <div id="upgrades-container"></div>
 
-  <h2>Generators</h2>
-  <div id="generators-container"></div>
+  <button id="click-btn" class="big-button">Click Me!</button>
 
-  <h2>Achievements</h2>
-  <div id="achievements-container"></div>
+  <div class="section">
+    <h2>Generators</h2>
+    <div id="generators-container" class="card-container"></div>
+  </div>
 
-  <h2>Prestige</h2>
-  <button id="prestige-btn">Prestige (Reset for bonus)</button>
-  <div id="prestige-info"></div>
+  <div class="section">
+    <h2>Upgrades</h2>
+    <div id="upgrades-container" class="card-container"></div>
+  </div>
 
-  <h2>Save / Load</h2>
-  <button onclick="downloadSave()">Download Save</button>
-  <input type="file" onchange="loadSave(event)">
+  <div class="section">
+    <h2>Achievements</h2>
+    <div id="achievements-container" class="card-container"></div>
+  </div>
+
+  <div class="controls">
+    <label><input type="checkbox" id="auto-buy"> Auto Buy</label>
+    <button id="prestige-btn">Prestige</button>
+  </div>
+
+  <div class="save-load">
+    <button onclick="downloadSave()">Download Save</button>
+    <input type="file" onchange="loadSave(event)">
+  </div>
 </div>
-<script src="script.js"></script>
-</body>
-</html>
